@@ -1,4 +1,4 @@
-// import express, { Request, Response, NextFunction, Application, ErrorRequestHandler } from 'express';
+//  import express, { Request, Response, NextFunction, Application, ErrorRequestHandler } from 'express';
 
 // import { Server } from 'http';
 
@@ -35,6 +35,9 @@
 
 
 
+
+
+// File System : 
 // import { createServer, IncomingMessage, ServerResponse } from "http";
 
 // import * as fs from 'fs';
@@ -52,13 +55,13 @@
 //         if (request.method === "GET") {
 //             // response.end("hello world");
 
-//             // Create files:-
+//             // Create file :
 //             fs.open('mynewfile2.txt', 'w', function (err, file) {
 //                 if (err) throw err;
 //                 console.log('File open');
 //             });
 
-//             //Update files:-
+//             //Update file :
 //             fs.appendFile('mynewfile.txt', ' Append content', function (err) {
 //                 if (err) throw err;
 //                 console.log('File append');
@@ -69,23 +72,23 @@
 //                 console.log("File written Sucessfully ")
 //             });
 
-//             // Read files:-
+//             // Read file :
 //             const readfile = fs.readFileSync(path.join(__dirname, 'myFile.txt'), { encoding: 'utf-8' })
 //             console.log(readfile);
 
-//             // Delete files:-
+//             // Delete file :
 //             // fs.unlink('mynewfile3.txt', function (err) {
 //             //     if (err) throw err;
 //             //     console.log('File deleted!');
 //             // });
 
-//             //Rename files:-
+//             // Rename file :
 //             // fs.rename('mynewfile1.txt', 'myrenamedfile.txt', function (err) {
 //             //     if (err) throw err;
-//             //     console.log('File Rename');
+//             //     console.log('File Renamed!');
 //             // });
 
-//             var adr = 'http://localhost:8080/default.htm?year=2020&month=August&name=ritika&tech=backend';
+//             var adr = 'http://localhost:8080/default.htm?year=2020&month=November&name=ritika&tech=fullstack';
 
 //             var q = url.parse(adr, true);
 
@@ -99,32 +102,24 @@
 
 // server.listen(port, () => console.log(`server is listining at port ${port}`));
 
+//Events :
+// import { EventEmitter } from 'events';
 
+// const eventBroker = new EventEmitter();
 
+// eventBroker.on('event-1', () => {
+//     console.log("event 1 is fired");
+// })
 
-//Event:
+// eventBroker.on('checkPage', (statusCode, msg) => {
+//     console.log(`status code is ${statusCode} and the page is ${msg}`);
+// })
 
-import { EventEmitter } from 'events';
+// eventBroker.emit('event-1');
 
-const eventBroker = new EventEmitter();
+// eventBroker.emit('checkPage', 200, 'ok');
 
-eventBroker.on('event-1', () => {
-    console.log("event 1 is fired");
-})
-
-eventBroker.on('checkPage', (statusCode, msg) => {
-    console.log(`status code is ${statusCode} and the page is ${msg}`);
-})
-
-eventBroker.emit('event-1');
-
-eventBroker.emit('checkPage', 200, 'ok');
-
-
-
-
-//upload files:
-
+// upload files:
 // import express, { Request, Response, NextFunction, Application } from 'express';
 // import multer from 'multer';
 
@@ -156,38 +151,63 @@ eventBroker.emit('checkPage', 200, 'ok');
 
 // app.listen(port, () => console.log(`server is listining at port ${port}`));
 
+//EMAIL :
+// import express, { Request, Response, NextFunction } from 'express';
+// import nodemailer from 'nodemailer';
+
+// const port = 9800;
+// const app = express();
+
+// const transporter = nodemailer.createTransport({
+//     service: 'gmail',
+//     auth: { user: "ritka.sumfactor@gmail.com", pass: "ucdnghmjkloiswts" }
+// });
+
+// let mailOptions = {
+//     from: "ritka.sumfactor@gmail.com",
+//     to: "ritikasrivastava5439@gmail.com",
+//     subject: "NODEJS",
+//     text: "THIS IS NODEJS TUTORIAL"
+// }
+
+// app.get('/sendEmail', (req: Request, res: Response, next: NextFunction) => {
+
+//     transporter.sendMail(mailOptions, (error, info) => {
+//         if (error) return res.status(500).send({ error: error })
+
+//         console.log("🚀 ~ file: app.ts:80 ~ transporter.sendMail ~ info:", info)
+
+//         return res.status(200).send({ info: info });
+//     });
+// });
+
+// app.listen(port, () => console.log(`server is listining at port ${port}`));
 
 
 
 
-//Email:
-import express, { Request, Response, NextFunction } from 'express';
-import nodemailer from 'nodemailer';
+//SQL workbench :
+import express, { Application } from 'express';
+import { Server } from 'http';
+import { config } from 'dotenv';
+config();
 
-const port = 9800;
-const app = express();
+const app: Application = express();
 
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: { user: "ritika.sumfactor@gmail.com", pass: "utwqbsdhdvtuebds" }
-});
+import { connectNodeDatabase } from '../src/Database/connectDatabase';
 
-let mailOptions = {
-    from: "ritika.sumfactor@gmail.com",
-    to: "ritikasrivastava5439@gmail.com",
-    subject: "Nodejs_Project",
-    text: "THIS IS NODEJS TUTORIAL"
-}
+import router from '../src/Routes/routes'
 
-app.get('/sendEmail', (req: Request, res: Response, next: NextFunction) => {
+const port: number = Number(process.env.PORT);
 
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) return res.status(500).send({ error: error })
+app.use(express.json());
 
-        console.log("🚀 ~ file: app.ts:80 ~ transporter.sendMail ~ info:", info)
+app.use('/', router);
 
-        return res.status(200).send({ info: info });
-    });
-});
+connectNodeDatabase().then((response) => {
+    console.log(response)
+    const server: Server = app.listen(port, () => console.log(`server is running at port http://localhost:${port}`))
 
-app.listen(port, () => console.log(`server is listining at port ${port}`));
+}).catch((error) => {
+    console.log("🚀 ~ file: app.ts:102 ~ connectNodeDatabase ~ error:", error)
+})
